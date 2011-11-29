@@ -11,9 +11,9 @@ Needless to say, as this is only version 0.0.1, please wath your step (hacks).
 Before tagging any text, you must set the path to the Oslo-Bergen-Tagger either by:
 
 * Calling `set-obt-path!`
-* or supply the path when calling `tag-text`
+* or supply the path when calling `obt-tag`
 
-you only need to set the path once.
+You only need to set the path once. Currently, only disambiguated bokmål is supported.
 
 ## License
 
