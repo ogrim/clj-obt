@@ -2,7 +2,7 @@
 
 The Oslo-Bergen-Tagger is a GPL licensed Norwegian text tagger. This is an interface for accessing it with Clojure.
 
-clj-obt supports Linux only, and you must aquire the tagger from http://tekstlab.uio.no/obt-ny/index.html
+clj-obt supports Linux only, and you must aquire the tagger from http://tekstlab.uio.no/obt-ny/ or clone it here on GitHub: https://github.com/noklesta/The-Oslo-Bergen-Tagger
 
 Needless to say, as this is only version 0.0.1, please wath your step (hacks).
 
