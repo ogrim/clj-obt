@@ -1,10 +1,5 @@
 (ns clj-obt.taggedword)
 
-(defrecord TaggedWord [tags lemma word i])
-
-(defn new-tagged-word [tags lemma word i]
-  (TaggedWord. tags lemma word i))
-
 (defn capitalized? [[s]]
   (if (re-seq #"[A-ZÆØÅ]" (str s))
     true false))

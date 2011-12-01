@@ -3,8 +3,7 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [clj-obt.taggedword :as tw])
-  (:use [clj-obt.filesystem])
-  (:import [clj-egsiona.protocols.taggedword.TaggedWord]))
+  (:use [clj-obt.filesystem]))
 
 (def obt-path-atom (atom ""))
 (def scriptfile-atom (atom ""))
@@ -57,7 +56,8 @@
 
                 (re-seq #"\t" line)
                 (dosync (let [[lemma tags] (extract-tags line)]
-                          (alter result conj (tw/new-tagged-word tags lemma @word (alter i inc))))
+                          (alter result conj {:tags tags :lemma lemma :word @word :i (alter i inc)}
+                                 ))
                         (ref-set word ""))))
         @result)))
 
