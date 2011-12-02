@@ -4,11 +4,11 @@ The Oslo-Bergen-Tagger is a GPL licensed Norwegian text tagger. This is an inter
 
 clj-obt supports Linux only, and you must acquire the tagger from http://tekstlab.uio.no/obt-ny/ or clone it here on GitHub: https://github.com/noklesta/The-Oslo-Bergen-Tagger
 
-Needless to say, as this is only version 0.0.2, please watch your step (hacks).
+Needless to say, as this is only version 0.0.3, please watch your step (hacks).
 
 ## Installation
 
-Simply add the library with Leiningen: `[clj-obt "0.0.2"]` and require `clj-obt.core`
+Simply add the library with Leiningen: `[clj-obt "0.0.3"]` and require `clj-obt.core`
 
 ## Usage
 
@@ -18,6 +18,8 @@ Before tagging any text, you must set the path to the Oslo-Bergen-Tagger either 
 * or supply the path when calling `obt-tag`
 
 You only need to set the path once per session. Currently, only disambiguated bokmål is supported.
+
+The resulting output from the tagger is parsed to simple maps. There are helper functions in `clj-obt.tools` to manipulate and filter the tagged words.
 
 ## License
 

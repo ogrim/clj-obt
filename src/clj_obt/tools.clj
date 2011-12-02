@@ -1,4 +1,4 @@
-(ns clj-obt.taggedword)
+(ns clj-obt.tools)
 
 (defn capitalized? [[s]]
   (if (re-seq #"[A-ZÆØÅ]" (str s))

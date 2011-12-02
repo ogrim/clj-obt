@@ -1,12 +1,11 @@
 (ns clj-obt.core
   (:require [clj-obt.cli :as cli]
             [clojure.string :as str]
-            [clojure.java.io :as io]
-            [clj-obt.taggedword :as tw])
+            [clojure.java.io :as io])
   (:use [clj-obt.filesystem]))
 
-(def obt-path-atom (atom ""))
-(def scriptfile-atom (atom ""))
+(def ^:private obt-path-atom (atom ""))
+(def ^:private scriptfile-atom (atom ""))
 
 (defn- script-content [obt-path]
   (str "#!/bin/sh\n"
