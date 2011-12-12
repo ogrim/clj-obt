@@ -4,17 +4,25 @@
   (if (re-seq #"[A-ZÆØÅ]" (str s))
     true false))
 
-(defn drop-tag [parsed tag]
-  (filter #(not (tag (:tags %))) parsed))
+(defn in?
+  "true if seq contains elm"
+  [seq elm]
+  (if (some #{elm} seq) true false))
 
-(defn drop-tags [parsed tag-set]
-  (filter #(not (some tag-set (:tags %))) parsed))
+(defn drop-tag [parsed tag]
+  (filter #(not (in? (:tags %) tag)) parsed))
+
+(defn drop-tags [parsed tags]
+  (filter #(not (some (apply hash-set tags) (:tags %))) parsed))
 
 (defn filter-capitalized [parsed]
   (filter #(capitalized? (:word %)) parsed))
 
 (defn filter-tag [parsed tag]
-  (filter #(tag (:tags %)) parsed))
+  (filter #(in? (:tags %) tag) parsed))
+
+(defn filter-tags [parsed tags]
+  (filter #(some (apply hash-set tags) (:tags %)) parsed))
 
 (defn filter-word [parsed word]
   (filter #(= (:word %) word) parsed))

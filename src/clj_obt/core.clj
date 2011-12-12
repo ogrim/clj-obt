@@ -44,8 +44,7 @@
     [(str/replace lemma "\"" "")
      (->> tags
           (remove empty?)
-          (map keyword)
-          (apply hash-set))]))
+          (apply vector))]))
 
 (defn- parse-tagged [tagged]
   (let [i (ref 0)
