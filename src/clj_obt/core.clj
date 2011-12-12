@@ -39,7 +39,8 @@
       (first)))
 
 (defn- extract-tags [line]
-  (let [[_ lemma & tags] (str/split line #"\s")]
+  (let [[_ lemma t] (str/split line #"\"")
+        tags (str/split t #"\s")]
     [(str/replace lemma "\"" "")
      (->> tags
           (map keyword)
