@@ -43,6 +43,7 @@
         tags (str/split t #"\s")]
     [(str/replace lemma "\"" "")
      (->> tags
+          (remove empty?)
           (map keyword)
           (apply hash-set))]))
 
