@@ -39,3 +39,11 @@
   (loop [[tag & more] (remove-tag head tags) acc [head]]
     (cond (empty? tag) acc
           :else (recur (remove-tag tag more) (conj acc tag)))))
+
+(defn preceeding-tag
+  "Finds words from given position (starts from 1, inclusive), looks behind and matches tag"
+  [parsed tag from]
+  (->> (take from parsed)
+       (reverse)
+       (take-while #(in? (:tags %) tag))
+       (reverse)))
