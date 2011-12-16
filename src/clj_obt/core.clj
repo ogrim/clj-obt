@@ -75,6 +75,38 @@
        (->> (call-obt s)
             (parse-tagged))))
 
+(def ^{:private true} id-chars
+  [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9 \A \B \C \D \E \F \G \H \I \J \K \L \M \N \O \P \Q \R \S \T \U
+   \V \W \X \Y \Z \a \b \c \d \e \f \g \h \i \j \k \l \m \n \o \p \q \r \s \t \u \v \w \x \y \z])
+
+(defn- gen-id [length]
+  (loop [i length, acc []]
+    (if (pos? i)
+      (recur (dec i) (conj acc (rand-nth id-chars)))
+      acc)))
+
+(defn- resolve-splits [id tagged]
+  (let [splitfn (fn [t] (split-with #(not= % (.trim id)) t))]
+    (loop [[split more] (splitfn tagged), acc []]
+      (if (empty? split) acc
+          (recur (splitfn (rest more)) (conj acc split))))))
+
+(defn- tag-multiple [texts]
+  (let [id (str " <" (gen-id 30) "> ")]
+    (->> texts
+         (interpose id)
+         (apply str)
+         (call-obt)
+         (resolve-splits id)
+         (map parse-tagged))))
+
+(defn- select-tagger [text]
+  (cond (string? text)
+        (tag-text text)
+        (and (coll? text) (every? true? (map string? text)))
+        (tag-multiple text)
+        :else (throw (Exception. "OBT can only tag strings"))))
+
 (defn set-obt-path!
   "Generates the script for the Oslo-Bergen-Tagger if it is not set,
   the scriptfile does't exist or the path is new.
@@ -92,5 +124,5 @@
   set-obt-path! first.
 
   obt-path should be /path/to/The-Oslo-Bergen-Tagger"
-  ([s] (if (validate-scriptfile) (tag-text s) (throw (Exception. "Path to OBT is not set"))))
-  ([s obt-path] (do (set-obt-path! obt-path) (tag-text s))))
+  ([text] (if (validate-scriptfile) (select-tagger text) (throw (Exception. "Path to OBT is not set"))))
+  ([text obt-path] (do (set-obt-path! obt-path) (select-tagger text))))
