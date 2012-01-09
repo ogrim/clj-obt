@@ -13,12 +13,13 @@
        obt-path "/cg/bm_morf-prestat.cg --codepage-output utf-8 --no-pass-origin -e | "
        obt-path "/OBT-Stat/bin/run_obt_stat.rb | perl -ne 'print if /\\S/'"))
 
-(defn- remove-old-scriptfiles!
+(defn remove-old-scriptfiles!
   "Deletes old script-files in the /tmp directory by matching the files to a regex."
   []
-  (doall (->> (cli/cmd-text "ls /tmp/")
-        (filter #(re-seq #"clj-obt-script-.+[.]tmp" %))
-        (map #(cli/cmd (str "rm /tmp/" %))))))
+  (->> (cli/cmd-text "ls /tmp")
+       (filter #(re-seq #"clj-obt-script-.+[.]tmp" %) )
+       (map #(java.io.File. (str "/tmp/" %)))
+       (map io/delete-file)))
 
 (defn- generate-scriptfile []
   (let [scriptfile (do (remove-old-scriptfiles!)
