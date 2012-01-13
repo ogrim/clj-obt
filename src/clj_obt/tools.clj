@@ -47,3 +47,22 @@
        (reverse)
        (take-while #(in? (:tags %) tag))
        (reverse)))
+
+(defn split-sentences
+  "Splits the parsed text into sentences, based on what OBT have tagged as such with the \"<<<\" tag"
+  [parsed]
+  (letfn [(first-sentence [parsed]
+            (loop [[tag & more] parsed , acc []]
+              (if (in? (:tags tag) "<<<") [(conj acc tag) more]
+                  (recur more (conj acc tag)))))]
+    (loop [[sentence remaining] (first-sentence parsed) , acc []]
+      (if (empty? remaining) (conj acc sentence)
+          (recur (first-sentence remaining) (conj acc sentence))))))
+
+(defn tag->sentence
+  "Takes output from (split-sentences) and returns the sentence where the tagged word tag occurs."
+  [sentences tag]
+  (let [tagi (dec (:i tag))]
+    (loop [[sentence & [fmore & _ :as more]] sentences , i (count sentence)]
+      (if (> tagi i) (recur more (+ i (count fmore)))
+          sentence))))
