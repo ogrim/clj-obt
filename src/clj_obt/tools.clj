@@ -13,7 +13,16 @@
   (filter #(not (in? (:tags %) tag)) parsed))
 
 (defn drop-tags [parsed tags]
-  (filter #(not (some (apply hash-set tags) (:tags %))) parsed))
+  (let [tag-set (apply hash-set tags)]
+   (filter #(not (some tag-set (:tags %))) parsed)))
+
+(defn drop-words [parsed words]
+  (let [word-set (apply hash-set (distinct words))]
+    (filter #(not (in? word-set (:word %))) parsed)))
+
+(defn previous-tag [parsed tag]
+  (let [i (- (:i tag) 2)]
+    (if (neg? i) nil (nth parsed i))))
 
 (defn filter-capitalized [parsed]
   (filter #(capitalized? (:word %)) parsed))
@@ -22,7 +31,8 @@
   (filter #(in? (:tags %) tag) parsed))
 
 (defn filter-tags [parsed tags]
-  (filter #(some (apply hash-set tags) (:tags %)) parsed))
+  (let [tag-set (apply hash-set tags)]
+   (filter #(some tag-set (:tags %)) parsed)))
 
 (defn filter-word [parsed word]
   (filter #(= (:word %) word) parsed))
@@ -32,15 +42,15 @@
        (= (:tags a) (:tags b))
        (= (:lemma a) (:lemma b))))
 
-(defn remove-tag [tag tags]
-  (filter #(not (compare-tags tag %)) tags))
+(defn remove-tag [parsed tag]
+  (filter #(not (compare-tags tag %)) parsed))
 
 (defn distinct-tags [[head & tags]]
   (loop [[tag & more] (remove-tag head tags) acc [head]]
     (cond (empty? tag) acc
           :else (recur (remove-tag tag more) (conj acc tag)))))
 
-(defn preceeding-tag
+(defn preceding-tag
   "Finds words from given position (starts from 1, inclusive), looks behind and matches tag"
   [parsed tag from]
   (->> (take from parsed)
@@ -64,5 +74,4 @@
   [sentences tag]
   (let [tagi (dec (:i tag))]
     (loop [[sentence & [fmore & _ :as more]] sentences , i (count sentence)]
-      (if (> tagi i) (recur more (+ i (count fmore)))
-          sentence))))
+      (if (> tagi i) (recur more (+ i (count fmore))) sentence))))

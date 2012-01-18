@@ -6,7 +6,7 @@ clj-obt supports Linux only, and you must acquire the tagger from http://tekstla
 
 ## Installation
 
-Simply add the library with Leiningen: `[clj-obt "0.2.1"]` and require `clj-obt.core`
+Simply add the library with Leiningen: `[clj-obt "0.3.0"]` and require `clj-obt.core`
 
 ## Usage
 
@@ -28,10 +28,10 @@ There is a startup cost in calling the tagger. If you call `obt-tag` on a number
 
     (obt-tag ["many" "texts" "to" "be" "tagged"])
 
-The tagger function will then concatenate all the texts, tag them in one OBT invocation, split them up again, and return them to you - separately in a vector. Doing this, we save about n-1 OBT startup time.
+The tagger function will then concatenate all the texts, tag them in one OBT invocation, split them up again, and return them to you - separately in a vector. Doing this, we save about n-1 of OBT startup time cost.
 
 ## License
 
-Copyright (C) 2011 Aleksander Skjæveland Larsen
+Copyright (C) 2011-2012 Aleksander Skjæveland Larsen
 
 Distributed under the Eclipse Public License, the same as Clojure.
