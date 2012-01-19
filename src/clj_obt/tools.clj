@@ -45,10 +45,11 @@
 (defn remove-tag [parsed tag]
   (filter #(not (compare-tags tag %)) parsed))
 
-(defn distinct-tags [[head & tags]]
-  (loop [[tag & more] (remove-tag head tags) acc [head]]
-    (cond (empty? tag) acc
-          :else (recur (remove-tag tag more) (conj acc tag)))))
+(defn distinct-tags [parsed]
+  (let [[pfirst & pmore] parsed]
+    (loop [[tag & more] (remove-tag pmore pfirst) acc [pfirst]]
+      (cond (empty? tag) acc
+            :else (recur (remove-tag more tag) (conj acc tag))))))
 
 (defn preceding-tag
   "Finds words from given position (starts from 1, inclusive), looks behind and matches tag"
