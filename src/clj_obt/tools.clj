@@ -9,6 +9,15 @@
   [seq elm]
   (if (some #{elm} seq) true false))
 
+(defn compare-tags [a b]
+  (and (= (:word a) (:word b))
+       (= (:tags a) (:tags b))
+       (= (:lemma a) (:lemma b))))
+
+(defn identical-tags [a b]
+  (and (compare-tags a b)
+       (= (:i a) (:i b))))
+
 (defn drop-tag [parsed tag]
   (filter #(not (in? (:tags %) tag)) parsed))
 
@@ -20,9 +29,20 @@
   (let [word-set (apply hash-set (distinct words))]
     (filter #(not (in? word-set (:word %))) parsed)))
 
-(defn previous-tag [parsed tag]
+(defn previous-tag
+  "Takes the entire parsed text, which must not be modified
+  because nth is used with the tags :i to select previous tag"
+  [parsed tag]
   (let [i (- (:i tag) 2)]
     (if (neg? i) nil (nth parsed i))))
+
+(defn previous-tag-sentence
+  "Uses identical comparison to select the previous tag"
+  [sentence tag]
+  (->> sentence
+       (reverse)
+       (drop-while #(not (identical-tags tag %)))
+       (second)))
 
 (defn filter-capitalized [parsed]
   (filter #(capitalized? (:word %)) parsed))
@@ -36,11 +56,6 @@
 
 (defn filter-word [parsed word]
   (filter #(= (:word %) word) parsed))
-
-(defn compare-tags [a b]
-  (and (= (:word a) (:word b))
-       (= (:tags a) (:tags b))
-       (= (:lemma a) (:lemma b))))
 
 (defn remove-tag [parsed tag]
   (filter #(not (compare-tags tag %)) parsed))
