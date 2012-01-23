@@ -54,8 +54,16 @@
   (let [tag-set (apply hash-set tags)]
    (filter #(some tag-set (:tags %)) parsed)))
 
-(defn filter-word [parsed word]
+(defn filter-word
+  "Return all tags in parsed which matches the case-sensitive word"
+  [parsed word]
   (filter #(= (:word %) word) parsed))
+
+(defn filter-word-insensitive
+  "Return all tags in parsed which matches the case-insensitive word"
+  [parsed word]
+  (let [w (.toLowerCase word)]
+    (filter #(= (.toLowerCase (:word %)) w) parsed)))
 
 (defn remove-tag [parsed tag]
   (filter #(not (compare-tags tag %)) parsed))
