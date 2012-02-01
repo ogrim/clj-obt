@@ -6,7 +6,7 @@ clj-obt supports Linux only, and you must acquire the tagger from http://tekstla
 
 ## Installation
 
-Simply add the library with Leiningen: `[clj-obt "0.3.4"]` and require `clj-obt.core`
+Simply add the library with Leiningen: `[clj-obt "0.3.5"]` and require `clj-obt.core`
 
 ## Usage
 

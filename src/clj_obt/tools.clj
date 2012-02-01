@@ -44,6 +44,13 @@
        (drop-while #(not (identical-tags tag %)))
        (second)))
 
+(defn next-tag
+  "Uses identical comparison to select the next tag"
+  [parsed tag]
+  (->> parsed
+       (drop-while #(not (identical-tags tag %)))
+       (second)))
+
 (defn filter-capitalized [parsed]
   (filter #(capitalized? (:word %)) parsed))
 
