@@ -1,5 +1,6 @@
 (ns clj-obt.core
   (:require [clj-obt.cli :as cli]
+            [clj-obt.tools :as t]
             [clojure.string :as str]
             [clojure.java.io :as io])
   (:use [clj-obt.filesystem]))
@@ -29,8 +30,9 @@
         scriptfile)))
 
 (defn- call-obt [text]
-  (with-temp-file [f text]
-    (cli/cmd-text (str (.getAbsolutePath @scriptfile-atom) " " (.getAbsolutePath f)))))
+  (let [clean (t/clean-string text)]
+    (with-temp-file [f clean]
+     (cli/cmd-text (str (.getAbsolutePath @scriptfile-atom) " " (.getAbsolutePath f))))))
 
 (defn- extract-word [line]
   (-> (str/split line #"<word>")

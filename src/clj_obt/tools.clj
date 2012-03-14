@@ -9,6 +9,11 @@
   [seq elm]
   (if (some #{elm} seq) true false))
 
+(def ^:private problematic-chars [\  \ ])
+
+(defn clean-string [s]
+  (->> s .trim (filter #(not (in? problematic-chars %))) (apply str)))
+
 (defn compare-tags [a b]
   (and (= (:word a) (:word b))
        (= (:tags a) (:tags b))
