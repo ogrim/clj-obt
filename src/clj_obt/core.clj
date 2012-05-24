@@ -3,7 +3,8 @@
             [clj-obt.tools :as t]
             [clojure.string :as str]
             [clojure.java.io :as io])
-  (:use [clj-obt.filesystem]))
+  (:use [clj-obt.filesystem])
+  (:import [java.util UUID]))
 
 (def ^:private obt-path-atom (atom ""))
 (def ^:private scriptfile-atom (atom ""))
@@ -36,9 +37,9 @@
 
 (defn- extract-word [line]
   (-> (str/split line #"<word>")
-      (second)
+      second
       (str/split #"</word>")
-      (first)))
+      first))
 
 (defn- extract-tags [line]
   (let [[_ lemma t] (str/split line #"\"")
@@ -49,19 +50,18 @@
           (apply vector))]))
 
 (defn- parse-tagged [tagged]
-  (let [i (ref 0)
-        word (ref "")
-        result (ref [])]
-    (do (doseq [line tagged]
-          (cond (re-seq #"<word>" line)
-                (dosync (alter word str (extract-word line)))
+  (let [i (atom 0)
+        word (atom "")
+        result (atom [])]
+    (doseq [line tagged]
+      (cond (re-seq #"<word>" line)
+            (reset! word (extract-word line))
 
-                (re-seq #"\t" line)
-                (dosync (let [[lemma tags] (extract-tags line)]
-                          (alter result conj {:tags tags :lemma lemma :word @word :i (alter i inc)}
-                                 ))
-                        (ref-set word ""))))
-        @result)))
+            (re-seq #"\t" line)
+            (let [[lemma tags] (extract-tags line)]
+              (swap! result conj {:tags tags :lemma lemma :word @word :i (swap! i inc)})
+              (reset! word ""))))
+    @result))
 
 (defn- validate-scriptfile []
   (if (and (seq @obt-path-atom)
@@ -74,18 +74,8 @@
 
 (defn- tag-text [s]
   (if (seq s)
-       (->> (call-obt s)
-            (parse-tagged))))
-
-(def ^{:private true} id-chars
-  [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9 \A \B \C \D \E \F \G \H \I \J \K \L \M \N \O \P \Q \R \S \T \U
-   \V \W \X \Y \Z \a \b \c \d \e \f \g \h \i \j \k \l \m \n \o \p \q \r \s \t \u \v \w \x \y \z])
-
-(defn- gen-id [length]
-  (loop [i length, acc []]
-    (if (pos? i)
-      (recur (dec i) (conj acc (rand-nth id-chars)))
-      acc)))
+    (->> (call-obt s)
+         (parse-tagged))))
 
 (defn- resolve-splits [id tagged]
   (let [splitfn (fn [t] (split-with #(not= % (.trim id)) t))]
@@ -94,7 +84,7 @@
           (recur (splitfn (rest more)) (conj acc split))))))
 
 (defn- tag-multiple [texts]
-  (let [id (str " <" (gen-id 30) "> ")]
+  (let [id (str " <" (UUID/randomUUID) "> ")]
     (->> texts
          (interpose id)
          (apply str)
