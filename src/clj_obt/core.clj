@@ -30,7 +30,7 @@
         (cli/cmd (str "chmod +x " (.getAbsolutePath scriptfile)))
         scriptfile)))
 
-(defn- call-obt [text]
+ (defn- call-obt [text]
   (let [clean (t/clean-string text)]
     (with-temp-file [f clean]
      (cli/cmd-text (str (.getAbsolutePath @scriptfile-atom) " " (.getAbsolutePath f))))))
